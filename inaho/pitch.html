@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稲ほ — 企画プレゼン資料</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:    #3B6D11;
+  --green-bg: #EAF3DE;
+  --gray:     #6B7280;
+  --gray-bg:  #F3F4F6;
+  --border:   #E5E7EB;
+  --text:     #111827;
+  --text2:    #4B5563;
+  --red:      #DC2626;
+  --amber:    #D97706;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+  background: #fff; color: var(--text);
+  overflow: hidden;
+}
+
+/* ── デッキ ── */
+#deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+/* ── 各スライド ── */
+.slide {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  padding: 56px 80px 72px;
+  display: none;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+
+/* 表紙のみ中央 */
+.slide.cover {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ── タグ ── */
+.tag {
+  display: inline-block;
+  font-size: 12px; font-weight: 700; color: var(--green);
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* ── タイトル ── */
+.t1 { font-size: 48px; font-weight: 900; line-height: 1.15; margin-bottom: 28px; }
+.t2 { font-size: 40px; font-weight: 900; line-height: 1.15; margin-bottom: 28px; }
+
+/* ── テキスト ── */
+.body { font-size: 22px; color: var(--text2); line-height: 1.75; }
+.note { font-size: 16px; color: var(--gray); line-height: 1.6; }
+.em   { color: var(--green); font-weight: 700; }
+
+/* ── グリッド ── */
+.g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+
+/* ── カード ── */
+.card {
+  border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 28px 30px; background: #fff;
+}
+.card-green { background: var(--green-bg); border-color: var(--green); }
+
+.icon  { font-size: 34px; margin-bottom: 12px; }
+.num   { font-size: 34px; font-weight: 900; color: var(--green); margin-bottom: 6px; }
+.lbl   { font-size: 15px; color: var(--gray); }
+.ctitle { font-size: 19px; font-weight: 700; margin-bottom: 8px; }
+.cbody  { font-size: 16px; color: var(--text2); line-height: 1.65; }
+
+/* ── 箇条書き ── */
+.bul { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.bul li {
+  display: flex; gap: 14px;
+  font-size: 21px; color: var(--text2); line-height: 1.65;
+}
+.bul li::before {
+  content: '●'; color: var(--green); font-size: 13px;
+  margin-top: 7px; flex-shrink: 0;
+}
+
+/* ── テーブル（競合比較） ── */
+table.comp {
+  width: 100%; border-collapse: collapse; font-size: 18px;
+}
+table.comp th {
+  background: var(--green-bg); color: var(--green);
+  padding: 13px 18px; font-weight: 700;
+  border-bottom: 2px solid var(--green);
+  text-align: center;
+}
+table.comp th:first-child { text-align: left; }
+table.comp td {
+  padding: 12px 18px; border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+table.comp td:first-child { text-align: left; font-weight: 600; }
+table.comp tr:last-child td { border-bottom: none; }
+
+/* ── テーブル（シミュレーション） ── */
+table.sim {
+  width: 100%; border-collapse: collapse; font-size: 20px;
+}
+table.sim th {
+  background: var(--green-bg); color: var(--green);
+  padding: 13px 24px; font-weight: 700;
+  border-bottom: 2px solid var(--green); text-align: right;
+}
+table.sim th:first-child { text-align: left; }
+table.sim td { padding: 13px 24px; border-bottom: 1px solid var(--border); text-align: right; }
+table.sim td:first-child { text-align: left; font-weight: 600; }
+table.sim .bep { background: #FEF3C7; font-weight: 700; }
+table.sim tr:last-child td { border-bottom: none; }
+
+/* ── プラン価格 ── */
+.price { font-size: 32px; font-weight: 900; color: var(--green); margin: 8px 0 6px; }
+.price span { font-size: 15px; font-weight: 400; color: var(--gray); }
+
+/* ── ロードマップ ── */
+.rm { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+.rm-card {
+  padding: 22px 24px; background: var(--gray-bg);
+  border-radius: 0 12px 12px 0; border-left: 4px solid var(--green);
+}
+.rm-ph { font-size: 12px; font-weight: 700; color: var(--green); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+.rm-pd { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.rm-bd { font-size: 15px; color: var(--text2); line-height: 1.65; }
+
+/* ── JA比較カード ── */
+.ja-card { border: 1.5px solid var(--border); border-radius: 14px; padding: 24px 28px; }
+.ja-card.best { border-color: var(--green); border-width: 2.5px; background: var(--green-bg); }
+.ja-badge {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  background: var(--green); color: #fff; border-radius: 99px;
+  padding: 2px 12px; margin-bottom: 10px;
+}
+.ja-title { font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+.ja-row { font-size: 15px; line-height: 1.7; margin-bottom: 6px; }
+.ja-real { font-size: 15px; font-weight: 700; color: var(--green); margin-top: 10px; }
+
+/* ── リスク行 ── */
+.risk { display: flex; flex-direction: column; gap: 14px; }
+.risk-row {
+  display: grid; grid-template-columns: 250px 1fr;
+  border: 1px solid var(--border); border-radius: 11px; overflow: hidden;
+}
+.risk-q { background: var(--green-bg); padding: 14px 18px; font-size: 15px; font-weight: 700; color: var(--green); display: flex; align-items: center; }
+.risk-a { padding: 14px 18px; font-size: 15px; color: var(--text2); line-height: 1.6; }
+
+/* ── アクションリスト ── */
+.act { display: flex; flex-direction: column; gap: 14px; }
+.act-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--gray-bg); border-radius: 11px;
+  padding: 14px 20px; font-size: 20px;
+}
+.act-n {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--green); color: #fff;
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ── 強み ── */
+.str { display: flex; flex-direction: column; gap: 12px; }
+.str-row {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--green-bg); border-radius: 11px;
+  padding: 14px 20px; font-size: 19px; font-weight: 600; color: var(--green);
+}
+
+/* ── 画面カード ── */
+.scr { border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+.scr-h { background: var(--green); color: #fff; padding: 10px 16px; font-size: 14px; font-weight: 700; }
+.scr-b { padding: 16px; font-size: 14px; color: var(--text2); line-height: 1.65; }
+
+/* ── 2カラム ── */
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+/* ── ナビ ── */
+#counter {
+  position: fixed; bottom: 24px; left: 48px;
+  font-size: 15px; color: var(--gray); font-weight: 600; z-index: 200;
+}
+#nav {
+  position: fixed; bottom: 16px; right: 48px;
+  display: flex; gap: 8px; z-index: 200;
+}
+#nav button {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: #fff;
+  cursor: pointer; font-size: 17px; color: var(--text2);
+  display: flex; align-items: center; justify-content: center;
+}
+#nav button:hover:not(:disabled) { background: var(--green-bg); border-color: var(--green); }
+#nav button:disabled { opacity: .3; cursor: default; }
+
+/* ── 印刷 ── */
+@media print {
+  html, body { overflow: visible; height: auto; }
+  #deck { overflow: visible; height: auto; position: static; }
+  #counter, #nav { display: none; }
+  .slide {
+    position: relative !important; display: flex !important;
+    width: 100%; height: 100vh;
+    page-break-after: always; break-after: page;
+  }
+}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- 01 表紙 -->
+<section class="slide cover active">
+  <div style="font-size:76px;margin-bottom:20px">🌾</div>
+  <div class="tag" style="font-size:14px">米・稲農家向け AI 営農支援アプリ</div>
+  <div style="font-size:88px;font-weight:900;color:var(--green);letter-spacing:-.02em;margin-bottom:8px">稲ほ</div>
+  <div style="font-size:28px;color:var(--text2);margin-bottom:16px">農家の毎日を、もっとスマートに。</div>
+  <div class="note">2026年3月　社内企画プレゼン</div>
+</section>
+
+<!-- 02 そもそも農業って？ -->
+<section class="slide">
+  <div class="tag">背景</div>
+  <h2 class="t2">そもそも農業って？</h2>
+  <div class="g4" style="margin-bottom:32px">
+    <div class="card"><div class="num">215万戸</div><div class="lbl">日本の農家数（2020年）</div></div>
+    <div class="card"><div class="num">67.8歳</div><div class="lbl">農家の平均年齢</div></div>
+    <div class="card"><div class="num">約9兆円</div><div class="lbl">農業産出額（年間）</div></div>
+    <div class="card"><div class="num">9割</div><div class="lbl">スマホ保有率（60代農家）</div></div>
+  </div>
+  <ul class="bul">
+    <li>水稲（お米）は日本で最も多く作られている作物。稲作農家は約<span class="em">70万戸</span>。</li>
+    <li>「農家＝個人事業主」が多く、ITツールの導入率が極めて低い。</li>
+    <li>スマホは持っているのに、農業専用アプリはほぼ使われていない。</li>
+  </ul>
+  <div style="margin-top:20px">
+    <div style="font-size:16px;font-weight:700;color:var(--gray);margin-bottom:10px">稲作の1年間</div>
+    <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:6px">
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">1月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">農閑期・計画</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">2月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">農閑期・準備</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center;border:2px solid #3B6D11">
+        <div style="font-size:13px;font-weight:700;color:#3B6D11">3月 ◀今</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">種もみ準備</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">4月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">育苗</div>
+      </div>
+      <div style="background:#EAF3DE;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#3B6D11">5月</div>
+        <div style="font-size:11px;color:#3B6D11;margin-top:4px">田植え🌱</div>
+      </div>
+      <div style="background:#EAF3DE;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#3B6D11">6月</div>
+        <div style="font-size:11px;color:#3B6D11;margin-top:4px">田植え・除草</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">7月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">水管理・追肥</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">8月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">出穂</div>
+      </div>
+      <div style="background:#EAF3DE;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#3B6D11">9月</div>
+        <div style="font-size:11px;color:#3B6D11;margin-top:4px">稲刈り🌾</div>
+      </div>
+      <div style="background:#EAF3DE;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#3B6D11">10月</div>
+        <div style="font-size:11px;color:#3B6D11;margin-top:4px">稲刈り・乾燥</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">11月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">出荷・販売</div>
+      </div>
+      <div style="background:#F3F4F6;border-radius:8px;padding:8px 4px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--gray)">12月</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px">農閑期</div>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--text2);margin-top:10px;line-height:1.65">
+      繁忙期（5〜6月・9〜10月）を避けて導入・サポートを行う。今（3月）からβテストを開始すれば田植えシーズンに間に合う。
+    </p>
+  </div>
+</section>
+
+<!-- 03 農家が抱える課題 -->
+<section class="slide">
+  <div class="tag">Problem</div>
+  <h2 class="t2">農家が抱える4つの課題</h2>
+  <div class="g2">
+    <div class="card">
+      <div class="icon">😰</div>
+      <div class="ctitle">病害虫の発見が遅れる</div>
+      <div class="cbody">目視確認のみに頼っており、初期症状を見落として大規模被害になるケースが多い。早期発見すれば農薬コストを大幅削減できる。</div>
+    </div>
+    <div class="card">
+      <div class="icon">📔</div>
+      <div class="ctitle">記録・申請が煩雑</div>
+      <div class="cbody">紙の作業日誌・手書きの補助金申請書類。検索や共有が困難で、記録漏れも常態化。申請機会を逃すケースも多い。</div>
+    </div>
+    <div class="card">
+      <div class="icon">🏪</div>
+      <div class="ctitle">情報はJA任せ</div>
+      <div class="cbody">補助金・農薬・販路情報をJA窓口に依存。自分で情報収集する手段が乏しく、最適な判断ができていない。</div>
+    </div>
+    <div class="card">
+      <div class="icon">💸</div>
+      <div class="ctitle">収支の見える化ゼロ</div>
+      <div class="cbody">コスト・収益の把握が感覚頼り。経営データがないため改善のPDCAが回せず、赤字でも原因がわからない。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 市場規模 -->
+<section class="slide">
+  <div class="tag">Market</div>
+  <h2 class="t2">市場規模</h2>
+  <div class="g4" style="margin-bottom:32px">
+    <div class="card"><div class="num">70万戸</div><div class="lbl">国内水稲農家数</div></div>
+    <div class="card"><div class="num">800億円</div><div class="lbl">農業SaaS市場（2030年予測）<sup style="font-size:11px;color:var(--green)">※1</sup></div></div>
+    <div class="card"><div class="num">年率15%</div><div class="lbl">農業SaaS市場の成長率</div></div>
+    <div class="card"><div class="num">3.2兆円</div><div class="lbl">コメ流通市場規模</div></div>
+  </div>
+  <ul class="bul" style="margin-bottom:20px">
+    <li>初年度ターゲット：<span class="em">1ha以上の稲作農家 約5万戸</span>のうち1,000戸の獲得を目指す。</li>
+    <li>スマホ普及率の向上により、高齢農家へのデジタルリーチが初めて現実的になってきた。</li>
+  </ul>
+  <div style="font-size:14px;color:#666;border-left:3px solid #EAF3DE;padding:12px 16px;line-height:1.75;margin-top:auto">
+    <strong style="color:var(--green)">※1 農業SaaSとは？</strong><br>
+    農業向けのソフトウェアサービス（Software as a Service）のこと。作業記録・経営管理・気象情報・販売管理など、農業に特化したクラウドツール全般を指す。<br>
+    スマホやPCからいつでもアクセスでき、月額料金で使えるサブスクリプション型が主流。稲ほもこの農業SaaS市場に参入するプロダクト。
+  </div>
+</section>
+
+<!-- 05 解決策：稲ほ -->
+<section class="slide">
+  <div class="tag">Solution</div>
+  <h2 class="t2">解決策：稲ほ</h2>
+  <div class="g3" style="margin-bottom:32px">
+    <div class="card card-green" style="padding:34px 30px">
+      <div class="icon">📸</div>
+      <div class="ctitle" style="font-size:21px">撮る</div>
+      <div class="cbody" style="font-size:17px">スマホで作物を撮影するだけでAIが即診断。農業知識ゼロでも使える。</div>
+    </div>
+    <div class="card card-green" style="padding:34px 30px">
+      <div class="icon">📝</div>
+      <div class="ctitle" style="font-size:21px">記録する</div>
+      <div class="cbody" style="font-size:17px">3タップで作業日誌を入力。補助金申請書類も自動で整理される。</div>
+    </div>
+    <div class="card card-green" style="padding:34px 30px">
+      <div class="icon">📊</div>
+      <div class="ctitle" style="font-size:21px">管理する</div>
+      <div class="cbody" style="font-size:17px">売上・コスト・利益をリアルタイムで可視化。補助金期限通知付き。</div>
+    </div>
+  </div>
+  <ul class="bul">
+    <li><span class="em">稲・米に特化</span>→ 将来は全作物対応プラットフォームへ拡張。</li>
+    <li>JAとも直販とも<span class="em">併用できる中立設計</span>。どちらかを強制しない。</li>
+  </ul>
+</section>
+
+<!-- 06 なぜIGNISがやるのか？ -->
+<section class="slide">
+  <div class="tag">Why IGNIS</div>
+  <h2 class="t2">なぜIGNISがやるのか？</h2>
+
+  <div class="g3" style="margin-bottom:20px">
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">💻</div>
+      <div class="ctitle">開発力がある</div>
+      <div class="cbody">ホームページ制作・受託開発・ソフトウェア開発の実績多数。DenPatto（自社SaaS）の開発・運用ノウハウを保有。稲ほに必要な技術スタックはすでに社内にある。</div>
+    </div>
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">📍</div>
+      <div class="ctitle">大分県が拠点</div>
+      <div class="cbody">豊後大野市を拠点とする地元企業。農家コミュニティへのアクセスが近く、顔の見える関係でβテスト農家を集めやすい。</div>
+    </div>
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">🚀</div>
+      <div class="ctitle">DX推進の実績</div>
+      <div class="cbody">「企業のDX推進」を事業の柱として掲げている。農業DXは次の自然な展開。受託開発で培った業務理解力が農家の課題発見にも活きる。</div>
+    </div>
+  </div>
+
+  <div style="font-size:16px;color:var(--gray);font-weight:600;margin-bottom:10px">⚠️ 懸念点（正直に2つ）</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div style="background:#FFF8E7;border-left:3px solid #F59E0B;padding:18px 20px;border-radius:0 10px 10px 0">
+      <div style="font-size:17px;font-weight:700;margin-bottom:10px">1. エンジニアが1人</div>
+      <div style="font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:12px">社員5名のうちITエンジニア経験者は1名のみ。現状、開発のほぼすべてを1人で担っている。</div>
+      <div style="font-size:15px;color:var(--green);line-height:1.7;font-weight:600">→ Claude Codeなど AIツールを最大活用して開発速度を補う。外部エンジニアとの業務委託も視野に入れる。</div>
+    </div>
+    <div style="background:#FFF8E7;border-left:3px solid #F59E0B;padding:18px 20px;border-radius:0 10px 10px 0">
+      <div style="font-size:17px;font-weight:700;margin-bottom:10px">2. BtoB中心でBtoCは未経験</div>
+      <div style="font-size:16px;color:var(--text2);line-height:1.7;margin-bottom:12px">これまでの顧客は企業がメイン。農家（個人事業主）向けのサポート・営業スタイルは未知数。</div>
+      <div style="font-size:15px;color:var(--green);line-height:1.7;font-weight:600">→ 農業アドバイザーを顧問に迎え農家目線を補完。まずβテスト10戸で農家との向き合い方を学ぶ。</div>
+    </div>
+  </div>
+
+  <div style="background:var(--green);color:#fff;border-radius:12px;padding:20px 28px;font-size:18px;line-height:1.75;font-weight:600">
+    稲ほはIGNISの新規事業として立ち上げる。開発力・地元ネットワーク・DX実績という3つの強みを活かし、大分県の農家から日本全国へ。
+  </div>
+</section>
+
+<!-- 07 チーム・体制 -->
+<section class="slide">
+  <div class="tag">Team</div>
+  <h2 class="t2">チーム・体制</h2>
+  <div class="g3" style="margin-bottom:20px">
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">💻</div>
+      <div class="ctitle">開発担当（1名）</div>
+      <div class="cbody">駆け出しエンジニアながらClaude Codeを最大活用。本日のプロトタイプ・この企画書自体もAIツールで制作。「少人数×AIツール」で大企業並みのスピードを目指す。</div>
+    </div>
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">📣</div>
+      <div class="ctitle">事業推進（複数名）</div>
+      <div class="cbody">副業・兼業スタイルで参加。農家への声かけ・βテスト農家の選定・フィードバック収集・営業活動を担当。</div>
+    </div>
+    <div class="card card-green" style="padding:24px 26px">
+      <div class="icon">🌾</div>
+      <div class="ctitle">農業アドバイザー（募集中）</div>
+      <div class="cbody">病害虫データの監修・農家ネットワークの提供。現役農家または農業試験場関係者を想定。顧問契約での参加を検討中。</div>
+    </div>
+  </div>
+  <div style="background:#FFF8E7;border-left:3px solid #F59E0B;padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:16px;font-size:16px;color:var(--text2);line-height:1.75">
+    社員5名・全員副業スタイルで参加。<strong>固定費ゼロで検証できるのが今の強み。</strong><br>
+    売上が立ち始めたら専任メンバーの採用・外部エンジニアとの契約を進める。
+  </div>
+  <div style="background:var(--green);color:#fff;border-radius:12px;padding:18px 28px;font-size:17px;line-height:1.75;text-align:center;font-weight:600">
+    現在募集中：農業アドバイザー / 外部エンジニア（業務委託）<br>
+    <span style="font-weight:400;font-size:15px">興味ある方はぜひ声をかけてください。</span>
+  </div>
+</section>
+
+<!-- 08 機能一覧 -->
+<section class="slide">
+  <div class="tag">Product</div>
+  <h2 class="t2">機能一覧</h2>
+  <div class="g2">
+    <div class="card">
+      <div class="icon">🔬</div>
+      <div class="ctitle">AI病害虫診断</div>
+      <div class="cbody">スマホで撮影→病名・対処法・農薬名を即提案。Anthropic Claude Vision APIを利用。診断精度は農業アドバイザーが監修。</div>
+    </div>
+    <div class="card">
+      <div class="icon">📋</div>
+      <div class="ctitle">作業記録</div>
+      <div class="cbody">日誌・農薬散布記録・肥料記録を3タップで入力。補助金申請に必要な書類フォーマットへ自動変換。</div>
+    </div>
+    <div class="card">
+      <div class="icon">💴</div>
+      <div class="ctitle">経営管理</div>
+      <div class="cbody">売上・コスト・利益をリアルタイムで見える化。圃場ごとの収益比較・年次トレンドのグラフ表示。</div>
+    </div>
+    <div class="card">
+      <div class="icon">📢</div>
+      <div class="ctitle">補助金ナビ</div>
+      <div class="cbody">申請可能な補助金を自動抽出して一覧表示。期限アラート通知付き。JA・直販どちらとも中立に使える設計。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 画面イメージ -->
+<section class="slide">
+  <div class="tag">Screen</div>
+  <h2 class="t2">画面イメージ</h2>
+  <div class="g4" style="margin-bottom:24px">
+    <div class="scr">
+      <div class="scr-h">🏠 ホーム</div>
+      <div class="scr-b">圃場一覧サマリー<br>生育ステータス<br>（播種→田植え→収穫）<br>病害虫アラート<br>直近の作業ログ</div>
+    </div>
+    <div class="scr">
+      <div class="scr-h">🔬 診断</div>
+      <div class="scr-b">カメラ起動→撮影<br>AI診断結果<br>（病名・確信度）<br>対処法・農薬名の提案<br>診断履歴の一覧</div>
+    </div>
+    <div class="scr">
+      <div class="scr-h">📋 記録</div>
+      <div class="scr-b">作業ログ一覧<br>種類別フィルター<br>（耕起・施肥・散布 等）<br>書類エクスポート機能</div>
+    </div>
+    <div class="scr">
+      <div class="scr-h">💴 経営</div>
+      <div class="scr-b">月次収支グラフ<br>圃場別収益比較<br>補助金ステータス管理<br>年次損益サマリー</div>
+    </div>
+  </div>
+  <p class="note">※ React + TypeScript 製プロトタイプ（4画面）作成済み。現在ローカルで動作確認中。</p>
+</section>
+
+<!-- 10 競合・差別化 -->
+<section class="slide">
+  <div class="tag">Competition</div>
+  <h2 class="t2" style="margin-bottom:20px">競合・差別化</h2>
+  <table class="comp" style="margin-bottom:22px">
+    <thead>
+      <tr>
+        <th>機能</th><th>稲ほ</th><th>KSAS（クボタ）</th><th>アグリノート</th><th>e-kakashi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>AI病害虫診断</td><td>◎</td><td>×</td><td>×</td><td>△</td></tr>
+      <tr><td>作業記録</td><td>◎</td><td>◎</td><td>◎</td><td>○</td></tr>
+      <tr><td>経営管理</td><td>◎</td><td>○</td><td>△</td><td>×</td></tr>
+      <tr><td>補助金ナビ</td><td>◎</td><td>×</td><td>×</td><td>×</td></tr>
+      <tr><td>水稲特化</td><td>◎</td><td>×</td><td>×</td><td>○</td></tr>
+      <tr><td>月額980円〜</td><td>◎</td><td>×</td><td>○</td><td>×</td></tr>
+    </tbody>
+  </table>
+  <p class="note" style="font-size:17px">差別化ポイント：「AI診断 × 記録 × 経営 × 補助金ナビ」の<span class="em">一体型は競合にない</span>。水稲特化×低価格×シンプルUIで高齢農家にもリーチ。</p>
+</section>
+
+<!-- 11 収益モデル -->
+<section class="slide">
+  <div class="tag">Revenue Model</div>
+  <h2 class="t2">収益モデル</h2>
+  <div class="g3" style="margin-bottom:28px">
+    <div class="card">
+      <div class="ctitle">🌱 フリープラン</div>
+      <div class="price">無料</div>
+      <div class="cbody">診断5回/月・記録30件・圃場2枚まで<br><br>まず使ってもらうための入口</div>
+    </div>
+    <div class="card card-green">
+      <div class="ctitle">⭐ スタンダード</div>
+      <div class="price">980円<span>/月</span></div>
+      <div class="cbody">診断無制限・記録無制限・圃場20枚・経営管理機能つき<br><br>メインターゲット層</div>
+    </div>
+    <div class="card">
+      <div class="ctitle">🚀 プロプラン</div>
+      <div class="price">2,980円<span>/月</span></div>
+      <div class="cbody">全機能 + 複数ユーザー・API連携・専任サポート<br><br>大規模農家・農業法人向け</div>
+    </div>
+  </div>
+  <ul class="bul" style="gap:12px">
+    <li>将来：<span class="em">作物モジュール課金</span>（野菜・果樹対応）・農薬EC手数料・JA法人プラン</li>
+    <li>初年度目標：1,000農家 × 平均ARR 8,000円 = <span class="em">年間800万円</span></li>
+  </ul>
+</section>
+
+<!-- 12 費用・コスト試算 -->
+<section class="slide">
+  <div class="tag">Cost</div>
+  <h2 class="t2">費用・コスト試算</h2>
+  <div class="two">
+    <div>
+      <div style="font-size:19px;font-weight:700;margin-bottom:14px">🏗️ 初期費用</div>
+      <div class="card" style="padding:22px 26px">
+        <table style="width:100%;font-size:17px;border-collapse:collapse">
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--text2)">ドメイン取得</td>
+            <td style="text-align:right;font-weight:700;padding:10px 0;border-bottom:1px solid var(--border)">約1,500円/年</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--text2)">Apple Developer Program<sup style="font-size:10px;color:var(--green)">※4</sup></td>
+            <td style="text-align:right;font-weight:700;padding:10px 0;border-bottom:1px solid var(--border)">約15,000円/年</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;color:var(--text2)">Google Play 登録費<sup style="font-size:10px;color:var(--green)">※5</sup></td>
+            <td style="text-align:right;font-weight:700;padding:10px 0">約4,000円（買い切り）</td>
+          </tr>
+        </table>
+      </div>
+      <p class="note" style="margin-top:10px">エンジニア・デザイナーは自社開発のため人件費は別途</p>
+    </div>
+    <div>
+      <div style="font-size:19px;font-weight:700;margin-bottom:14px">📅 月次ランニングコスト（1,000ユーザー時）</div>
+      <div class="card" style="padding:22px 26px">
+        <table style="width:100%;font-size:17px;border-collapse:collapse">
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--text2)">Anthropic API<sup style="font-size:10px;color:var(--green)">※1</sup>（診断1回≒2円×1万回）</td>
+            <td style="text-align:right;font-weight:700;padding:10px 0;border-bottom:1px solid var(--border)">約2万円</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--text2)">Supabase<sup style="font-size:10px;color:var(--green)">※2</sup>（DB・認証・ストレージ）</td>
+            <td style="text-align:right;font-weight:700;padding:10px 0;border-bottom:1px solid var(--border)">約1万円</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid var(--border);color:var(--text2)">Vercel<sup style="font-size:10px;color:var(--green)">※3</sup>（ホスティング）</td>
+            <td style="text-align:right;font-weight:700;padding:10px 0;border-bottom:1px solid var(--border)">約0.5万円</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;font-weight:700">合計</td>
+            <td style="text-align:right;font-weight:900;font-size:22px;color:var(--green);padding:10px 0">約3.5万円/月</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:auto;padding-top:16px">
+    <div style="font-size:13px;color:#666;border-left:3px solid #EAF3DE;padding:8px 12px;line-height:1.6"><strong style="color:var(--green)">※1 Anthropic API</strong>　Anthropic社が提供するAIサービスの利用料金。稲ほでは写真から病害虫を診断する機能に使用。1回の診断あたり約2円と非常に安価。</div>
+    <div style="font-size:13px;color:#666;border-left:3px solid #EAF3DE;padding:8px 12px;line-height:1.6"><strong style="color:var(--green)">※2 Supabase</strong>　データベース・ユーザー認証・ファイル保存をまとめて提供するクラウドサービス。農家の作業記録や圃場データの保存に使用。AWSやGCPより安価で使いやすい。</div>
+    <div style="font-size:13px;color:#666;border-left:3px solid #EAF3DE;padding:8px 12px;line-height:1.6"><strong style="color:var(--green)">※3 Vercel</strong>　WebアプリをインターネットにPublishするためのホスティングサービス。稲ほのフロントエンド（画面）をここに置く。小規模なら無料で使える。</div>
+    <div style="font-size:13px;color:#666;border-left:3px solid #EAF3DE;padding:8px 12px;line-height:1.6"><strong style="color:var(--green)">※4 Apple Developer Program</strong>　iPhoneアプリをApp Storeに公開するために必要な年間登録費。これがないとiOSユーザーにアプリを配布できない。</div>
+    <div style="font-size:13px;color:#666;border-left:3px solid #EAF3DE;padding:8px 12px;line-height:1.6"><strong style="color:var(--green)">※5 Google Play 登録費</strong>　AndroidアプリをGoogle Playに公開するための初期登録費。1回払えばずっと使える（買い切り）。</div>
+  </div>
+</section>
+
+<!-- 13 収益シミュレーション -->
+<section class="slide">
+  <div class="tag">Simulation</div>
+  <h2 class="t2">収益シミュレーション</h2>
+  <table class="sim" style="margin-bottom:28px;font-size:18px">
+    <thead>
+      <tr>
+        <th style="text-align:left">ユーザー数</th>
+        <th>月次収益</th><th>月次コスト</th><th>月次利益</th><th>年次コスト</th><th style="color:var(--green);background:#d4e8c2">年次利益</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="bep"><td>36戸　← <span style="color:var(--green)">損益分岐点</span></td><td>3.5万円</td><td>0.5万円</td><td style="color:var(--green);font-weight:700">+3万円</td><td>6万円</td><td style="color:var(--green);font-weight:900">+36万円</td></tr>
+      <tr><td>100戸</td><td>9.8万円</td><td>1万円</td><td style="color:var(--green);font-weight:700">+8.8万円</td><td>12万円</td><td style="color:var(--green);font-weight:900">+105.6万円</td></tr>
+      <tr><td>500戸</td><td>49万円</td><td>2万円</td><td style="color:var(--green);font-weight:700">+47万円</td><td>24万円</td><td style="color:var(--green);font-weight:900">+564万円</td></tr>
+      <tr><td>1,000戸</td><td>98万円</td><td>3.5万円</td><td style="color:var(--green);font-weight:700">+94.5万円</td><td>42万円</td><td style="color:var(--green);font-weight:900">+1,134万円</td></tr>
+      <tr><td>3,000戸</td><td>294万円</td><td>8万円</td><td style="color:var(--green);font-weight:700">+286万円</td><td>96万円</td><td style="color:var(--green);font-weight:900">+3,432万円</td></tr>
+    </tbody>
+  </table>
+  <ul class="bul" style="gap:8px;margin-bottom:20px">
+    <li>損益分岐点は<span class="em">わずか36戸</span>。月次コストはユーザー数に応じて変動するため、スケールするほど利益率が大幅に改善する構造になっている。</li>
+    <li>大分県の水稲農家数は約1.2万戸（1ha以上は約3,000〜4,000戸）。100戸でシェア約3%・500戸でシェア約15%・1,000戸でシェア約30%に相当。まず大分県で実績を作り、全国展開へ。</li>
+  </ul>
+  <div style="font-size:16px;color:var(--gray);font-weight:600;margin-bottom:10px">フェーズ別ユーザー獲得目標（大分県スタート）</div>
+  <table style="width:100%;border-collapse:collapse;font-size:16px">
+    <thead>
+      <tr>
+        <th style="background:#EAF3DE;color:var(--green);padding:10px 16px;font-weight:700;text-align:left;border-bottom:2px solid var(--green)">フェーズ</th>
+        <th style="background:#EAF3DE;color:var(--green);padding:10px 16px;font-weight:700;text-align:right;border-bottom:2px solid var(--green)">戸数</th>
+        <th style="background:#EAF3DE;color:var(--green);padding:10px 16px;font-weight:700;text-align:center;border-bottom:2px solid var(--green)">現実性</th>
+        <th style="background:#EAF3DE;color:var(--green);padding:10px 16px;font-weight:700;text-align:left;border-bottom:2px solid var(--green)">備考</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:#EAF3DE">
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);font-weight:700">βテスト</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:right;font-weight:700">10〜30戸</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:center;color:var(--green);font-weight:700">★★★</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text2)">すぐ達成可能</td>
+      </tr>
+      <tr style="background:#EAF3DE">
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);font-weight:700">初年度</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:right;font-weight:700">100〜200戸</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:center;color:var(--green);font-weight:700">★★★</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text2)">大分県シェア約3〜6%</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);font-weight:600">2年目</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:right">500戸</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:center;color:var(--green);font-weight:700">★★</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text2)">大分県でトップシェア（約15%）</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);font-weight:600">3年目〜</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:right">1,000戸</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);text-align:center;color:var(--green);font-weight:700">★★</td>
+        <td style="padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text2)">大分県＋近隣県に拡大</td>
+      </tr>
+      <tr>
+        <td style="padding:9px 16px;font-weight:600">将来</td>
+        <td style="padding:9px 16px;text-align:right">3,000戸以上</td>
+        <td style="padding:9px 16px;text-align:center;color:var(--gray);font-weight:700">★</td>
+        <td style="padding:9px 16px;color:var(--text2)">全国展開後</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 14 JAとどう付き合うか -->
+<section class="slide">
+  <div class="tag">Discussion</div>
+  <h2 class="t2" style="margin-bottom:20px">JAとどう付き合うか？</h2>
+  <div class="g3" style="margin-bottom:24px">
+    <div class="ja-card">
+      <div class="ja-title">① JAを無視して戦う</div>
+      <div class="ja-row" style="color:var(--green)">◎ 参入スピードが速い<br>◎ 独自ブランドを出しやすい</div>
+      <div class="ja-row" style="color:var(--red)">× JAが強い地域で警戒される<br>× 補助金連携が難しい<br>× JA対抗サービスのリスク</div>
+      <div class="ja-real">現実性：△</div>
+    </div>
+    <div class="ja-card">
+      <div class="ja-title">② JAと協力する</div>
+      <div class="ja-row" style="color:var(--green)">◎ 一気に農家へリーチできる<br>◎ 信頼・ブランドを借りられる</div>
+      <div class="ja-row" style="color:var(--red)">× 意思決定が遅い<br>× 機能に口出しされるリスク<br>× JA依存度が高まる</div>
+      <div class="ja-real">現実性：○</div>
+    </div>
+    <div class="ja-card best">
+      <div class="ja-badge">推奨</div>
+      <div class="ja-title">③ 中立で行く</div>
+      <div class="ja-row" style="color:var(--green)">◎ JAとも直販とも使える<br>◎ リスクが低い<br>◎ 将来の選択肢を残せる</div>
+      <div class="ja-row" style="color:var(--amber)">△ 差別化メッセージが弱くなる可能性</div>
+      <div class="ja-real">現実性：◎</div>
+    </div>
+  </div>
+  <p class="note" style="font-size:18px;font-weight:600;color:var(--text2)">
+    → 最初は個人農家への直販で実績を作り、軌道に乗ったらJAと提携交渉が現実的。<br>
+    みなさんはどう思いますか？ 👉
+  </p>
+</section>
+
+<!-- 15 今がチャンスな理由 -->
+<section class="slide">
+  <div class="tag">Why Now</div>
+  <h2 class="t2">今がチャンスな理由</h2>
+  <div class="g4" style="margin-bottom:24px">
+    <div class="card card-green" style="padding:28px 24px">
+      <div class="icon">🏛️</div>
+      <div class="ctitle">国の政策が追い風</div>
+      <div class="cbody">農林水産省が「スマート農業」を推進中。農業DX関連の補助金が取りやすい環境が整っている。</div>
+    </div>
+    <div class="card card-green" style="padding:28px 24px">
+      <div class="icon">📱</div>
+      <div class="ctitle">スマホ普及が臨界点に</div>
+      <div class="cbody">60代農家のスマホ保有率が約9割に到達。「アプリを使う」心理的ハードルが下がったのはここ2〜3年。</div>
+    </div>
+    <div class="card card-green" style="padding:28px 24px">
+      <div class="icon">🏆</div>
+      <div class="ctitle">競合にまだ隙がある</div>
+      <div class="cbody">稲作特化×AI診断×経営管理の一体型はまだ存在しない。今なら先行者優位を取れる。</div>
+    </div>
+    <div class="card card-green" style="padding:28px 24px">
+      <div class="icon">🗣️</div>
+      <div class="ctitle">大分県は口コミが効く</div>
+      <div class="cbody">農業コミュニティは狭く、口コミが速い。最初の30戸を掴めれば自然に広がる。</div>
+    </div>
+  </div>
+  <div style="background:#FFF8E7;border-left:3px solid #F59E0B;padding:18px 20px;border-radius:0 10px 10px 0">
+    <div style="font-size:17px;font-weight:700;margin-bottom:12px">⚠️ 農業には季節性がある</div>
+    <ul class="bul" style="gap:10px">
+      <li style="font-size:17px">田植えシーズン（4〜6月）・稲刈りシーズン（9〜10月）が繁忙期で新ツール導入は難しい。</li>
+      <li style="font-size:17px">導入・説明はオフシーズン（冬〜春）に集中させる戦略が必要。</li>
+      <li style="font-size:17px"><span style="color:#D97706;font-weight:700">今（3月）からβテストを開始すれば、田植えシーズンに実際に使ってもらえる。</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 16 ロードマップ -->
+<section class="slide">
+  <div class="tag">Roadmap</div>
+  <h2 class="t2">ロードマップ</h2>
+  <div class="rm" style="margin-bottom:28px">
+    <div class="rm-card">
+      <div class="rm-ph">Phase 1</div>
+      <div class="rm-pd">〜3ヶ月</div>
+      <div class="rm-bd">MVP開発<br>βテスト農家10戸獲得<br>病害虫診断＋記録機能のみリリース<br>ユーザーインタビューで改善</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-ph">Phase 2</div>
+      <div class="rm-pd">〜6ヶ月</div>
+      <div class="rm-bd">経営管理・補助金ナビ追加<br>正式リリース<br>100農家目標<br>農業メディアへのPR開始</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-ph">Phase 3</div>
+      <div class="rm-pd">〜12ヶ月</div>
+      <div class="rm-bd">1,000農家<br>ARR 800万円目標<br>JA連携交渉の開始<br>診断AI精度向上</div>
+    </div>
+    <div class="rm-card">
+      <div class="rm-ph">Phase 4</div>
+      <div class="rm-pd">〜24ヶ月</div>
+      <div class="rm-bd">作物拡大（野菜・果樹）<br>シリーズA調達<br>全国展開<br>農業プラットフォーム化</div>
+    </div>
+  </div>
+  <p class="note">現在：React製プロトタイプ作成済み。Phase 1 MVP開発に向けて体制構築中。</p>
+</section>
+
+<!-- 17 リスクと対策 -->
+<section class="slide">
+  <div class="tag">Risk</div>
+  <h2 class="t2" style="margin-bottom:20px">リスクと対策</h2>
+  <div class="risk">
+    <div class="risk-row">
+      <div class="risk-q">農家のITリテラシーが低い</div>
+      <div class="risk-a">UI極限まで簡素化・高齢者テスト実施。「撮るだけ」「3タップ」を徹底。農協窓口でのデモも検討。</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-q">JAが対抗サービスを出す</div>
+      <div class="risk-a">先行者優位を早期に確立。独自の診断データを蓄積して参入障壁を作る。JAとの提携も視野に入れる。</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-q">AI診断の精度問題</div>
+      <div class="risk-a">誤診断時の免責表示を明記・人間確認を推奨。農業アドバイザーによるデータ監修で継続的に精度向上。</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-q">農業の季節性</div>
+      <div class="risk-a">オフシーズン（冬〜春）に導入・操作説明を集中。繁忙期は最小操作で使えるよう設計。</div>
+    </div>
+    <div class="risk-row">
+      <div class="risk-q">資金ショート</div>
+      <div class="risk-a">MVP最小限で検証してから追加投資。IT導入補助金・農業DX補助金の活用で開発コストを圧縮。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 まとめ・ネクストアクション -->
+<section class="slide">
+  <div class="tag">Next Action</div>
+  <h2 class="t2">まとめ・ネクストアクション</h2>
+  <div class="two">
+    <div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">稲ほの3つの強み</div>
+      <div class="str">
+        <div class="str-row">🔬 AI診断×記録×経営×補助金の一体型（競合にない）</div>
+        <div class="str-row">🌾 稲から始めてマルチ作物プラットフォームへ</div>
+        <div class="str-row">⚖️ JAと中立・どちらとも併用できる設計</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:14px">今すぐやること</div>
+      <div class="act">
+        <div class="act-row"><div class="act-n">1</div>βテスト農家10戸を今月中に確保</div>
+        <div class="act-row"><div class="act-n">2</div>農業アドバイザーの採用・顧問契約</div>
+        <div class="act-row"><div class="act-n">3</div>AI診断機能の実装（Anthropic API）</div>
+        <div class="act-row"><div class="act-n">4</div>3ヶ月でMVPリリース</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- #deck -->
+
+<div id="counter">1 / 16</div>
+<div id="nav">
+  <button id="bp" disabled>&#8592;</button>
+  <button id="bn">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const bp = document.getElementById('bp');
+  const bn = document.getElementById('bn');
+  let cur = 0;
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(slides.length - 1, n));
+    slides[cur].classList.add('active');
+    counter.textContent = (cur + 1) + ' / ' + slides.length;
+    bp.disabled = cur === 0;
+    bn.disabled = cur === slides.length - 1;
+  }
+
+  bp.addEventListener('click', () => go(cur - 1));
+  bn.addEventListener('click', () => go(cur + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+  });
+</script>
+</body>
+</html>
